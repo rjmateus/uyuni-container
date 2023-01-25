@@ -33,6 +33,10 @@ uyuni/server:1.0
 ```
 ## Run with Volumes
 
+A simple way to manage storage requirements is to mount necessary storage on the container host to '/var/lib/containers/storage/volumes'.  By using this method, the mapped podman volumes enumerated below will appear there.  For eample, creating an LVM LV or NFS mount there with adequate capacity will persist and prevent filling up the '/' filesystem on the container host.
+
+To run the container. edit the '-h' portion of this command with the desired FQDN of the containerized SUMA/Uyuni server.
+
 ```
 podman run -ti --tmpfs /run -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --add-host=download.opensuse.org:195.135.221.134 -h "uyuni-container-srv.tf.local" \
 --name=uyuni-server \
