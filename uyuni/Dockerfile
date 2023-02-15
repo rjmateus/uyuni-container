@@ -36,6 +36,7 @@ VOLUME [ \
 "/usr/share/salt-formulas/", \
 "/srv/susemanager/salt", \
 "/srv/salt",  \
+"/srv/www/", \
 # home(s)
 "/root/", \
 "/home/", \

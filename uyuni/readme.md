@@ -48,6 +48,7 @@ podman run -ti --tmpfs /run -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host 
 -v share-salt-formulas:/usr/share/salt-formulas \
 -v srv-susemanager_salt:/srv/susemanager/salt \
 -v srv-salt:/srv/salt \
+-v srv-www:/srv/www/ \
 -v etc-salt:/etc/salt \
 -v etc_rhn:/etc/rhn \
 -v var_log_rhn:/var/log/rhn \
