@@ -1,0 +1,95 @@
+#!/bin/sh
+
+CONTAINER_ID="$(podman ps -a | grep uyuni-server | awk '{ print $1 }')"
+RUNNING="$(podman ps | grep uyuni-server | awk '{ print $1 }')"
+
+echo $CONTAINER_ID
+echo $RUNNING
+
+case $1 in
+  terminal) # display Help
+    echo "terminal"
+
+    if [ -z "$RUNNING" ]
+    then
+          echo "Container not running"
+          exit 1;
+    fi
+
+    podman exec -ti $CONTAINER_ID bash
+    ;;
+  status) # display Help
+    echo "status"
+
+    if [ -z "$RUNNING" ]
+    then
+          echo "Container not running"
+          exit 1;
+    fi
+
+    podman exec -ti $CONTAINER_ID spacewalk-service status
+    ;;
+  start) # display Help
+
+    if [[ ! -z "$RUNNING" ]]
+    then
+          echo "Container is running"
+          exit 1;
+    fi
+    if [ -z "$CONTAINER_ID" ]
+    then
+          echo "Container does not exists"
+          exit 1;
+    fi
+
+    podman start -i $CONTAINER_ID
+    echo "starting"
+    ;;
+
+  stop)
+    if [ -z "$RUNNING" ]
+    then
+          echo "Container not running"
+          exit 1;
+    fi
+
+      podman kill -s SIGRTMIN+3 $CONTAINER_ID
+      echo "starting"
+      ;;
+  setup)
+    if [ -z "$RUNNING" ]
+    then
+          echo "Container not running"
+          exit 1;
+    fi
+    podman exec -ti $CONTAINER_ID yast
+    ;;
+  run)
+    if [[ ! -z "$CONTAINER_ID" ]]
+    then
+          echo "Container already deployed"
+          exit 1;
+    fi
+    podman run -ti --tmpfs /run -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --add-host=download.opensuse.org:195.135.221.134 -h "m43-minion-suse.tf.local" \
+    --name=uyuni-server \
+    -p 443:443 -p 80:80 -p 4505:4505 -p 4506:4506  \
+    -v pgsql:/var/lib/pgsql \
+    -v spacewalk:/var/spacewalk \
+    -v cache:/var/cache \
+    -v share-susemanager:/usr/share/susemanager \
+    -v share-salt-formulas:/usr/share/salt-formulas \
+    -v srv-susemanager_salt:/srv/susemanager/salt \
+    -v srv-salt:/srv/salt \
+    -v etc-salt:/etc/salt \
+    -v srv-www:/srv/www/ \
+    -v etc_rhn:/etc/rhn \
+    -v var_log_rhn:/var/log/rhn \
+    -v pki_tls_certs:/etc/pki \
+    -v apache2:/etc/apache2 \
+    -v root:/root \
+    -v tomcat:/etc/tomcat/ \
+    localhost/uyuni/server:1.1
+    ;;
+  *)
+    echo "terminal|start|stop|setup|run"
+esac
