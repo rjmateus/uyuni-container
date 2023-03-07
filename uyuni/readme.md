@@ -158,6 +158,9 @@ https://documentation.suse.com/container/all/html/SLES-container/cha-bci.html
 https://osric.com/chris/accidental-developer/2018/12/docker-versus-podman-and-iptables/
 
 
+# Build old images
+
+`podman build -f Dockerfile-2022-12 --label suma -t uyuni/server:2022.12 --add-host=download.opensuse.org:195.135.221.134 .`
 
 ---
 
